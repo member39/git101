@@ -37,7 +37,7 @@ import java.util.Set;
 import java.util.UUID;
 
 public class MainActivity extends Activity {
-    private static final String HOME_URL = "https://freshme.ai.studio/login";
+    private static final String HOME_URL = "https://vidrinks.ai.studio/login";
     private static final UUID SPP_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     private static final int REQ_BT = 1001;
 
