@@ -2,7 +2,6 @@ package com.vidrinks.app;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -12,7 +11,6 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowInsets;
@@ -23,7 +21,6 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
@@ -84,7 +81,6 @@ public class MainActivity extends Activity {
         });
 
         webView = new WebView(this);
-
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
         settings.setDomStorageEnabled(true);
@@ -133,24 +129,8 @@ public class MainActivity extends Activity {
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT));
 
-        Button printerButton = new Button(this);
-        printerButton.setText("🖨 พิมพ์");
-        printerButton.setAllCaps(false);
-        printerButton.setOnClickListener(v -> showPairedPrinters());
-        FrameLayout.LayoutParams buttonParams = new FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                Gravity.END | Gravity.BOTTOM);
-        int margin = dp(16);
-        buttonParams.setMargins(margin, margin, margin, margin);
-        root.addView(printerButton, buttonParams);
-
         setContentView(root);
         root.requestApplyInsets();
-    }
-
-    private int dp(int value) {
-        return (int) (value * getResources().getDisplayMetrics().density);
     }
 
     private void requestBluetoothPermissionIfNeeded() {
@@ -181,35 +161,8 @@ public class MainActivity extends Activity {
         return list;
     }
 
-    private void showPairedPrinters() {
-        ArrayList<BluetoothDevice> devices = pairedDevices();
-        if (devices.isEmpty()) {
-            Toast.makeText(this, "ยังไม่พบอุปกรณ์ Bluetooth ที่จับคู่ไว้", Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        String[] names = new String[devices.size()];
-        for (int i = 0; i < devices.size(); i++) {
-            BluetoothDevice d = devices.get(i);
-            String name = d.getName() == null ? "Bluetooth device" : d.getName();
-            names[i] = name + "\n" + d.getAddress();
-        }
-
-        new AlertDialog.Builder(this)
-                .setTitle("เลือกเครื่องพิมพ์")
-                .setItems(names, (dialog, which) -> {
-                    BluetoothDevice device = devices.get(which);
-                    String test = "VI Drinks\nBluetooth printer test\n------------------------\n\n";
-                    printToDevice(device.getAddress(), test);
-                })
-                .setNegativeButton("ยกเลิก", null)
-                .show();
-    }
-
     private void printToDevice(String macAddress, String text) {
         if (!canUseBluetooth()) return;
-        Toast.makeText(this, "กำลังส่งไปเครื่องพิมพ์...", Toast.LENGTH_SHORT).show();
-
         new Thread(() -> {
             BluetoothSocket socket = null;
             try {
